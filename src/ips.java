@@ -4,8 +4,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.Socket;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 
@@ -45,18 +49,48 @@ public class ips {
         }
     }
 	
+	private static ArrayList<Integer> escanerPuertos() throws IOException{
+		
+		ArrayList<Integer> puertosComunes = new ArrayList<Integer>();
+		List<Integer> elementosAñadir = Arrays.asList(80,443,21,22,110,995,143,993,26,25,2525,587,3306,2082,2083,2086,2087,2095,2096,2077,2078);
+		puertosComunes.addAll(elementosAñadir);
+		
+		ArrayList<Integer>puertosAbiertos = new ArrayList<Integer>();
+		String host = " localhost";
+ 
+        for (Integer port : puertosComunes) {
+        	
+            try {
+                Socket socket = new Socket(host, port);
+                puertosAbiertos.add(port);
+                socket.close();
+            } catch (IOException e) {
+               
+            }
+        }
+        return puertosAbiertos;
+	}
+	
     public static void main(String[] args) {
     	
+    	
     	try {
+    		ArrayList<Integer>puertosAbiertos = escanerPuertos();
     		
     		if(comprobarConexion()) {
     			System.out.println("Conectado a Internet.\n");
     			System.out.println("IP Privada: " + getIPprivada());
     			System.out.println("IP Publica: " + getIPpublica());
+    			if(puertosAbiertos.isEmpty()) {
+    				System.out.println("\nNo se encontraron puertos abiertos. ");
+    			}else {
+    				System.out.println("Puertos Abiertos: " + puertosAbiertos);
+    			}
     		}else {
     			System.out.println("Sin Conexion a Internet!\n");
     			System.out.println("IP Privada: " + getIPprivada());
     			System.out.println("IP Publica: " + getIPpublica());
+    			
     		}
 		} catch (UnknownHostException e) {
 			e.printStackTrace();

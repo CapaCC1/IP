@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.naming.InterruptedNamingException;
+
 
 
 public class ips {
@@ -38,7 +40,7 @@ public class ips {
 	
 	private static boolean comprobarConexion() throws IOException {
         try {
-            InetAddress dir = InetAddress.getByName("google.com");
+            InetAddress dir = InetAddress.getByName("google.es");
             if (dir.isReachable(5000)) {
                 return true;
             } else {
@@ -52,11 +54,11 @@ public class ips {
 	private static ArrayList<Integer> escanerPuertos() throws IOException{
 		
 		ArrayList<Integer> puertosComunes = new ArrayList<Integer>();
-		List<Integer> elementosAñadir = Arrays.asList(80,443,21,22,110,995,143,993,26,25,2525,587,3306,2082,2083,2086,2087,2095,2096,2077,2078);
+		List<Integer> elementosAñadir = Arrays.asList(22,80,443);
 		puertosComunes.addAll(elementosAñadir);
 		
 		ArrayList<Integer>puertosAbiertos = new ArrayList<Integer>();
-		String host = " localhost";
+		String host = getIPpublica();
  
         for (Integer port : puertosComunes) {
         	
@@ -71,6 +73,23 @@ public class ips {
         return puertosAbiertos;
 	}
 	
+	private static void escanearPuertosNmap() throws IOException {
+		String ip = getIPpublica();
+		String comando = "nmap -p 22" + ip;
+		String linea;
+		try {
+			Process proceso = Runtime.getRuntime().exec(comando);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(proceso.getInputStream()));
+			
+			while((linea = reader.readLine()) != null) {
+				System.out.println(linea);
+			}
+			proceso.waitFor();
+		}catch(InterruptedException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
     public static void main(String[] args) {
     	
     	
@@ -81,11 +100,13 @@ public class ips {
     			System.out.println("Conectado a Internet.\n");
     			System.out.println("IP Privada: " + getIPprivada());
     			System.out.println("IP Publica: " + getIPpublica());
+    			
     			if(puertosAbiertos.isEmpty()) {
     				System.out.println("\nNo se encontraron puertos abiertos. ");
     			}else {
-    				System.out.println("Puertos Abiertos: " + puertosAbiertos);
+    				System.out.println("\nPuertos Abiertos: " + puertosAbiertos);
     			}
+    			
     		}else {
     			System.out.println("Sin Conexion a Internet!\n");
     			System.out.println("IP Privada: " + getIPprivada());

@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.NetworkInterface;
@@ -41,10 +42,9 @@ public class ips {
 				InetAddress addr = direcciones.nextElement();
 				
 				//Verificamos si es una direccion IP valida y no es una direccion IPv6 local
-				if(addr.isLoopbackAddress() && !addr.getAddress().toString().contains(":")) {
-					resultado = addr.getHostAddress();
-				
-				}
+				if (addr instanceof Inet4Address && !addr.isLoopbackAddress()) {
+	                return addr.getHostAddress();
+	            }
 			}
 		}
 		return resultado;

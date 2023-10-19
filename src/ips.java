@@ -82,8 +82,8 @@ public class ips {
 	private static ArrayList<Integer> escanerPuertos() throws IOException{
 		
 		ArrayList<Integer> puertosComunes = new ArrayList<Integer>();
-		List<Integer> elementosAñadir = Arrays.asList(22,80,443);
-		puertosComunes.addAll(elementosAñadir);
+		List<Integer> elementosAniadir = Arrays.asList(22,80,443);
+		puertosComunes.addAll(elementosAniadir);
 		
 		ArrayList<Integer>puertosAbiertos = new ArrayList<Integer>();
 		String host = getIPpublica();

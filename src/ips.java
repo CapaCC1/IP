@@ -4,11 +4,14 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.NetworkInterface;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.naming.InterruptedNamingException;
@@ -20,6 +23,31 @@ public class ips {
 	private static String getIPprivada() throws UnknownHostException {
 		InetAddress ip = InetAddress.getLocalHost();
 		return ip.getHostAddress();
+	}
+	
+	private static String getIPprivada2() throws SocketException {
+		String resultado = "";
+		Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+		while(interfaces.hasMoreElements()) {
+			NetworkInterface iface = interfaces.nextElement();
+			
+			//No queremos interfaces de bucle de retorno o inactivas
+			if(iface.isLoopback()|| !iface.isUp()) {
+				continue;
+			}
+			
+			Enumeration<InetAddress> direcciones = iface.getInetAddresses();
+			while(direcciones.hasMoreElements()) {
+				InetAddress addr = direcciones.nextElement();
+				
+				//Verificamos si es una direccion IP valida y no es una direccion IPv6 local
+				if(addr.isLoopbackAddress() && !addr.getAddress().toString().contains(":")) {
+					resultado = addr.getHostAddress();
+				
+				}
+			}
+		}
+		return resultado;
 	}
 	
 	private static String getIPpublica() throws IOException {
@@ -98,7 +126,7 @@ public class ips {
     		
     		if(comprobarConexion()) {
     			System.out.println("Conectado a Internet.\n");
-    			System.out.println("IP Privada: " + getIPprivada());
+    			System.out.println("IP Privada: " + getIPprivada2());
     			System.out.println("IP Publica: " + getIPpublica());
     			
     			if(puertosAbiertos.isEmpty()) {

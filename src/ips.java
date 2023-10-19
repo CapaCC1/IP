@@ -113,22 +113,22 @@ public class ips {
 	    public static ArrayList<Integer> escanerPuertosMH() throws IOException {
 	        ArrayList<Integer> puertosComunes = new ArrayList<Integer>();
 	        List<Integer> elementosAniadir = Arrays.asList(
-	        		20,   // FTP - Transferencia de archivos
-	        	    21,   // FTP - Control de comandos
-	        	    22,   // SSH - Acceso seguro
-	        	    23,   // Telnet - Acceso remoto
-	        	    25,   // SMTP - Correo electrónico saliente
-	        	    53,   // DNS - Sistema de nombres de dominio
-	        	    80,   // HTTP - World Wide Web
-	        	    110,  // POP3 - Correo electrónico entrante (sin cifrar)
-	        	    143,  // IMAP - Correo electrónico entrante (sin cifrar)
-	        	    443,  // HTTPS - World Wide Web seguro
-	        	    465,  // SMTPS - Correo electrónico saliente seguro (SMTP con SSL/TLS)
-	        	    587,  // SMTP - Correo electrónico saliente (generalmente con TLS)
-	        	    993,  // IMAPS - Correo electrónico entrante seguro (IMAP con SSL/TLS)
-	        	    995,  // POP3S - Correo electrónico entrante seguro (POP3 con SSL/TLS)
-	        	    3306, // MySQL - Base de datos
-	        	    3389);  // RDP - Escritorio remoto de Windows
+	        		20,
+	        	    21, 
+	        	    22, 
+	        	    23,
+	        	    25,
+	        	    53,
+	        	    80,
+	        	    110,
+	        	    143,
+	        	    443,
+	        	    465,
+	        	    587,
+	        	    993,
+	        	    995,
+	        	    3306,
+	        	    3389);
 	        puertosComunes.addAll(elementosAniadir);
 
 	        ArrayList<Integer> puertosAbiertos = new ArrayList<Integer>();

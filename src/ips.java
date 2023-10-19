@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javax.naming.InterruptedNamingException;
 
@@ -28,13 +31,15 @@ public class ips {
 	
 	private static String getIPprivada2() throws SocketException {
 		String resultado = "";
+		
+		//Obtiene una enumeracion de todas las interfaces de red disponibles
 		Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
 		while(interfaces.hasMoreElements()) {
 			NetworkInterface iface = interfaces.nextElement();
 			
 			//No queremos interfaces de bucle de retorno o inactivas
 			if(iface.isLoopback()|| !iface.isUp()) {
-				continue;
+				continue; //Salta a la siguiente interfaz si es de bucle de retorno o inacitva
 			}
 			
 			Enumeration<InetAddress> direcciones = iface.getInetAddresses();
@@ -47,6 +52,7 @@ public class ips {
 	            }
 			}
 		}
+		resultado = "IP Privada no encontrada.";
 		return resultado;
 	}
 	
@@ -101,28 +107,49 @@ public class ips {
         return puertosAbiertos;
 	}
 	
-	private static void escanearPuertosNmap() throws IOException {
-		String ip = getIPpublica();
-		String comando = "nmap -p 22" + ip;
-		String linea;
-		try {
-			Process proceso = Runtime.getRuntime().exec(comando);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(proceso.getInputStream()));
-			
-			while((linea = reader.readLine()) != null) {
-				System.out.println(linea);
-			}
-			proceso.waitFor();
-		}catch(InterruptedException | IOException e) {
-			e.printStackTrace();
-		}
-	}
+	public static ArrayList<Integer> escanerPuertosMH() throws IOException {
+        ArrayList<Integer> puertosComunes = new ArrayList<Integer>();
+        List<Integer> elementosAniadir = Arrays.asList(22, 80, 443,21,20,5,7443,7445,7448,7450,54,32,67,9,2,1);
+        puertosComunes.addAll(elementosAniadir);
+
+        ArrayList<Integer> puertosAbiertos = new ArrayList<Integer>();
+        String host = getIPpublica();
+
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+        List<Future<Integer>> futures = new ArrayList<>();
+
+        for (Integer port : puertosComunes) {
+            Future<Integer> future = executor.submit(() -> {
+                try (Socket socket = new Socket(host, port)) {
+                    return port;
+                } catch (IOException e) {
+                    return null;
+                }
+            });
+            futures.add(future);
+        }
+
+        for (Future<Integer> future : futures) {
+            try {
+                Integer port = future.get();
+                if (port != null) {
+                    puertosAbiertos.add(port);
+                }
+            } catch (Exception e) {
+                // Manejar excepciones si es necesario
+            }
+        }
+
+        executor.shutdown();
+
+        return puertosAbiertos;
+    }
 	
     public static void main(String[] args) {
     	
     	
     	try {
-    		ArrayList<Integer>puertosAbiertos = escanerPuertos();
+    		ArrayList<Integer>puertosAbiertos = escanerPuertosMH();
     		
     		if(comprobarConexion()) {
     			System.out.println("Conectado a Internet.\n");
@@ -142,11 +169,11 @@ public class ips {
     			
     		}
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			System.out.println("ERROR");
 		}catch(MalformedURLException e) {
-			e.printStackTrace();
+			System.out.println("ERROR");
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("ERROR");
 		}
 
     }

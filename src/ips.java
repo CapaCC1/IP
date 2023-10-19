@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.NetworkInterface;
 import java.net.Socket;
@@ -107,43 +108,46 @@ public class ips {
         return puertosAbiertos;
 	}
 	
-	public static ArrayList<Integer> escanerPuertosMH() throws IOException {
-        ArrayList<Integer> puertosComunes = new ArrayList<Integer>();
-        List<Integer> elementosAniadir = Arrays.asList(22, 80, 443,21,20,5,7443,7445,7448,7450,54,32,67,9,2,1);
-        puertosComunes.addAll(elementosAniadir);
+	
 
-        ArrayList<Integer> puertosAbiertos = new ArrayList<Integer>();
-        String host = getIPpublica();
+	    public static ArrayList<Integer> escanerPuertosMH() throws IOException {
+	        ArrayList<Integer> puertosComunes = new ArrayList<Integer>();
+	        List<Integer> elementosAniadir = Arrays.asList(
+	        		20,   // FTP - Transferencia de archivos
+	        	    21,   // FTP - Control de comandos
+	        	    22,   // SSH - Acceso seguro
+	        	    23,   // Telnet - Acceso remoto
+	        	    25,   // SMTP - Correo electrónico saliente
+	        	    53,   // DNS - Sistema de nombres de dominio
+	        	    80,   // HTTP - World Wide Web
+	        	    110,  // POP3 - Correo electrónico entrante (sin cifrar)
+	        	    143,  // IMAP - Correo electrónico entrante (sin cifrar)
+	        	    443,  // HTTPS - World Wide Web seguro
+	        	    465,  // SMTPS - Correo electrónico saliente seguro (SMTP con SSL/TLS)
+	        	    587,  // SMTP - Correo electrónico saliente (generalmente con TLS)
+	        	    993,  // IMAPS - Correo electrónico entrante seguro (IMAP con SSL/TLS)
+	        	    995,  // POP3S - Correo electrónico entrante seguro (POP3 con SSL/TLS)
+	        	    3306, // MySQL - Base de datos
+	        	    3389);  // RDP - Escritorio remoto de Windows
+	        puertosComunes.addAll(elementosAniadir);
 
-        ExecutorService executor = Executors.newFixedThreadPool(10);
-        List<Future<Integer>> futures = new ArrayList<>();
+	        ArrayList<Integer> puertosAbiertos = new ArrayList<Integer>();
+	        String host = getIPpublica();
 
-        for (Integer port : puertosComunes) {
-            Future<Integer> future = executor.submit(() -> {
-                try (Socket socket = new Socket(host, port)) {
-                    return port;
-                } catch (IOException e) {
-                    return null;
-                }
-            });
-            futures.add(future);
-        }
+	        for (Integer port : puertosComunes) {
+	            try {
+	                // Crea un socket y establece un tiempo de espera
+	                Socket socket = new Socket();
+	                socket.connect(new InetSocketAddress(host, port), 10); // 1000 ms (1 segundo) de tiempo de espera
+	                socket.close();
+	                puertosAbiertos.add(port);
+	            } catch (IOException e) {
+	                // El puerto no pudo ser alcanzado dentro del tiempo de espera
+	            }
+	        }
 
-        for (Future<Integer> future : futures) {
-            try {
-                Integer port = future.get();
-                if (port != null) {
-                    puertosAbiertos.add(port);
-                }
-            } catch (Exception e) {
-                // Manejar excepciones si es necesario
-            }
-        }
-
-        executor.shutdown();
-
-        return puertosAbiertos;
-    }
+	        return puertosAbiertos;
+	    }
 	
     public static void main(String[] args) {
     	

@@ -192,7 +192,7 @@ public class ips {
 	                Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
 	                while (addresses.hasMoreElements()) {
 	                    InetAddress address = addresses.nextElement();
-	                    // Verificar si es una dirección IP privada (ejemplo: 192.168.x.x o 10.x.x.x)
+	                    
 	                    if (address.isSiteLocalAddress() && !address.isLoopbackAddress()) {
 	                        return address;
 	                    }
@@ -201,7 +201,7 @@ public class ips {
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }
-	        return null; // Si no se encuentra una direccion IP privada
+	        return null;
 	    }
 	    
 	    private static String getMascaraSubred() throws UnknownHostException, SocketException {

@@ -185,7 +185,7 @@ public class ips {
 	    
 	    
 	    
-	    private static String getMascaraSubred(String nombreInterfaz) throws UnknownHostException, SocketException {
+	    private static String getMascaraSubred(String nombreInterfaz) throws SocketException, UnknownHostException {
 	        String resultado = "";
 	        NetworkInterface networkInterface = null;
 
@@ -200,16 +200,16 @@ public class ips {
 	        }
 
 	        if (networkInterface != null) {
-	            int prefixLength = networkInterface.getInterfaceAddresses().get(0).getNetworkPrefixLength();
+	            InterfaceAddress interfaceAddress = networkInterface.getInterfaceAddresses().get(0);
+	            short prefixLength = interfaceAddress.getNetworkPrefixLength();
 
-	            int shiftAmount = 32 - prefixLength;
-	            int mask = -1 << shiftAmount;
-
-	            byte[] bytes = new byte[] {
-	                (byte) (mask >> 24 & 0xFF),
-	                (byte) (mask >> 16 & 0xFF),
-	                (byte) (mask >> 8 & 0xFF),
-	                (byte) (mask & 0xFF)
+	            // Calcula la máscara de subred en formato CIDR
+	            int subnetMask = 0xFFFFFFFF << (32 - prefixLength);
+	            byte[] bytes = new byte[]{
+	                (byte) ((subnetMask & 0xFF000000) >> 24),
+	                (byte) ((subnetMask & 0x00FF0000) >> 16),
+	                (byte) ((subnetMask & 0x0000FF00) >> 8),
+	                (byte) (subnetMask & 0x000000FF)
 	            };
 
 	            InetAddress netMask = InetAddress.getByAddress(bytes);

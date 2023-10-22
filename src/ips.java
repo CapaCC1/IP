@@ -187,39 +187,26 @@ public class ips {
 	    
 	    private static String getMascaraSubred() throws UnknownHostException, SocketException {
 	    	
-	    	String targetInterfaceName = "eth0"; // Nombre de la interfaz Ethernet que deseas
-	    	NetworkInterface targetInterface = null;
+	    	String resultado = "";	
 	    	
-	    	for (Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces(); networkInterfaces.hasMoreElements(); ) {
-	            NetworkInterface networkInterface = networkInterfaces.nextElement();
-
-	            if (networkInterface.getName().equals(targetInterfaceName)) {
-	                targetInterface = networkInterface;
-	                break; // Detenemos la busqueda cuando encontramos la interfaz deseada
-	            }
-	        }
+	    	 InetAddress localHost = Inet4Address.getLocalHost();
+	    	 NetworkInterface networkInterface = NetworkInterface.getByInetAddress(localHost);
+	    	 int prefixLength = networkInterface.getInterfaceAddresses().get(0).getNetworkPrefixLength();
+	    	
+	            int shiftAmount = 32 - prefixLength;
+	            int mask = -1 << shiftAmount;
+	            
+	            byte[] bytes = new byte[] {
+	                (byte) (mask >> 24 & 0xFF),
+	                (byte) (mask >> 16 & 0xFF),
+	                (byte) (mask >> 8 & 0xFF),
+	                (byte) (mask & 0xFF)
+	            };
+	            
+	            InetAddress netMask = InetAddress.getByAddress(bytes);
+	            resultado = netMask.getHostAddress();
+	            return resultado;
 	        
-	        if (targetInterface != null) {
-	            List<InterfaceAddress> interfaceAddresses = targetInterface.getInterfaceAddresses();
-	            if (interfaceAddresses != null && !interfaceAddresses.isEmpty()) {
-	                int prefijo = interfaceAddresses.get(0).getNetworkPrefixLength();
-	                int desplazamiento = 32 - prefijo;
-	                int mask = -1 << desplazamiento;
-	                
-	                byte[] bytes = new byte[] {
-	                    (byte) (mask >> 24 & 0xFF),
-	                    (byte) (mask >> 16 & 0xFF),
-	                    (byte) (mask >> 8 & 0xFF),
-	                    (byte) (mask & 0xFF)
-	                };
-	                
-	                InetAddress netMask = InetAddress.getByAddress(bytes);
-	                String mascara = netMask.getHostAddress();
-	                return mascara;
-	            }
-	        }
-	        
-	        return "No se pudo obtener la mascara de subred";
 	    }
 	    
     public static void main(String[] args) {

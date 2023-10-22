@@ -216,7 +216,7 @@ public class ips {
 	            }
 	        }
 
-	        return "No se pudo obtener la máscara de red para la interfaz " + interfaceName;
+	        return "No se pudo obtener la mascara de red para la interfaz " + interfaceName;
 	    }
 	
 	

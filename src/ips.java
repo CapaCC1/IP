@@ -203,7 +203,7 @@ public class ips {
 	            InterfaceAddress interfaceAddress = networkInterface.getInterfaceAddresses().get(0);
 	            short prefixLength = interfaceAddress.getNetworkPrefixLength();
 
-	            // Calcula la máscara de subred en formato CIDR
+	            // Calcula la mascara de subred en formato CIDR
 	            int subnetMask = 0xFFFFFFFF << (32 - prefixLength);
 	            byte[] bytes = new byte[]{
 	                (byte) ((subnetMask & 0xFF000000) >> 24),

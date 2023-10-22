@@ -156,17 +156,37 @@ public class ips {
 	    }
 	
 	    
-	    private static String getPuertaEnlace() throws IOException {
-	    	Process resultado = Runtime.getRuntime().exec("traceroute -m 1 www.amazon.com");
-	    	
-	    	BufferedReader output = new BufferedReader(new InputStreamReader(resultado.getInputStream()));
-	        String thisLine = output.readLine();
-	        StringTokenizer st = new StringTokenizer(thisLine);
-	        st.nextToken();
-	        String gateway = st.nextToken();
-	        return gateway;
-	    }
-	    
+
+		public static String getPuertaEnlace() {
+		    String gateway = "";
+		
+		    try {
+		        Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+		
+		        while (networkInterfaces.hasMoreElements()) {
+		            NetworkInterface networkInterface = networkInterfaces.nextElement();
+		            Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
+		
+		            while (inetAddresses.hasMoreElements()) {
+		                InetAddress inetAddress = inetAddresses.nextElement();
+		                
+		                if (!inetAddress.isLoopbackAddress() && !inetAddress.isLinkLocalAddress() && !inetAddress.isSiteLocalAddress()) {
+		                    gateway = inetAddress.getHostAddress();
+		                    break;
+		                }
+		            }
+		
+		            if (gateway != null) {
+		                break;
+		            }
+		        }
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		    }
+		
+		    return gateway;
+		}
+    
     public static void main(String[] args) {
     	
     	
@@ -178,7 +198,7 @@ public class ips {
     			System.out.println("Nombre: " + getNombreRed());
     			System.out.println("IP Privada: " + getIPprivada2());
     			System.out.println("IP Publica: " + getIPpublica());
-    			System.out.println("Puerta de Enlance: " + getPuertaEnlace());
+    			System.out.println("Puerta de Enlace: " + getPuertaEnlace());
     			
     			if(puertosAbiertos.isEmpty()) {
     				System.out.println("\nNo se encontraron puertos abiertos. ");

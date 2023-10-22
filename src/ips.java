@@ -174,7 +174,10 @@ public class ips {
 	        
 	        // La direccion de la puerta de enlace se encuentra en la tercera columna
 	        String gateway = st.nextToken();
-	        return gateway;
+	        
+	        // Eliminar los paréntesis
+	        String gw = gateway.substring(1, gateway.length() - 1);
+	        return gw;
 	    }
 	    
     public static void main(String[] args) {

@@ -184,16 +184,31 @@ public class ips {
 	        return gw;
 	    }
 	    
-	    private static InetAddress getLocalhostAddress() throws UnknownHostException {
-	        InetAddress localhost = InetAddress.getByName("127.0.0.1");
-	        return localhost;
+	    private static InetAddress getPrivateIPAddress() {
+	        try {
+	            Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+	            while (networkInterfaces.hasMoreElements()) {
+	                NetworkInterface networkInterface = networkInterfaces.nextElement();
+	                Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
+	                while (addresses.hasMoreElements()) {
+	                    InetAddress address = addresses.nextElement();
+	                    // Verificar si es una dirección IP privada (ejemplo: 192.168.x.x o 10.x.x.x)
+	                    if (address.isSiteLocalAddress() && !address.isLoopbackAddress()) {
+	                        return address;
+	                    }
+	                }
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	        return null; // Si no se encuentra una dirección IP privada
 	    }
 	    
 	    private static String getMascaraSubred() throws UnknownHostException, SocketException {
 	    	
 	    	String resultado = "";	
 	    	
-	    	 NetworkInterface networkInterface = NetworkInterface.getByInetAddress(getLocalhostAddress());
+	    	 NetworkInterface networkInterface = NetworkInterface.getByInetAddress(getPrivateIPAddress());
 	    	 int prefixLength = networkInterface.getInterfaceAddresses().get(0).getNetworkPrefixLength();
 	    	
 	            int shiftAmount = 32 - prefixLength;

@@ -185,7 +185,7 @@ public class ips {
 	    }
 	    
 	    private static InetAddress getLocalhostAddress() throws UnknownHostException {
-	        InetAddress localhost = InetAddress.getByName("localhost");
+	        InetAddress localhost = InetAddress.getByName("127.0.0.1");
 	        return localhost;
 	    }
 	    

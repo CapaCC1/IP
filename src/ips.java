@@ -186,11 +186,21 @@ public class ips {
 	    
 	    
 	    private static String getMascaraSubred() throws UnknownHostException, SocketException {
-	        InetAddress localHost = Inet4Address.getLocalHost();
-	        NetworkInterface networkInterface = NetworkInterface.getByInetAddress(localHost);
+	    	
+	    	String targetInterfaceName = "eth0"; // Nombre de la interfaz Ethernet que deseas
+	    	NetworkInterface targetInterface = null;
+	    	
+	    	for (Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces(); networkInterfaces.hasMoreElements(); ) {
+	            NetworkInterface networkInterface = networkInterfaces.nextElement();
+
+	            if (networkInterface.getName().equals(targetInterfaceName)) {
+	                targetInterface = networkInterface;
+	                break; // Detenemos la búsqueda cuando encontramos la interfaz deseada
+	            }
+	        }
 	        
-	        if (networkInterface != null) {
-	            List<InterfaceAddress> interfaceAddresses = networkInterface.getInterfaceAddresses();
+	        if (targetInterface != null) {
+	            List<InterfaceAddress> interfaceAddresses = targetInterface.getInterfaceAddresses();
 	            if (interfaceAddresses != null && !interfaceAddresses.isEmpty()) {
 	                int prefijo = interfaceAddresses.get(0).getNetworkPrefixLength();
 	                int desplazamiento = 32 - prefijo;

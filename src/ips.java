@@ -164,6 +164,11 @@ public class ips {
 	        StringTokenizer st = new StringTokenizer(thisLine);
 	        st.nextToken();
 	        st.nextToken();
+	        st.nextToken();
+	        st.nextToken();
+	        st.nextToken();
+	        st.nextToken();
+	        st.nextToken();
 	        String gateway = st.nextToken();
 	        return gateway;
 	    }
@@ -179,7 +184,7 @@ public class ips {
     			System.out.println("Nombre: " + getNombreRed());
     			System.out.println("IP Privada: " + getIPprivada2());
     			System.out.println("IP Publica: " + getIPpublica());
-    			System.out.println("Puerta de Enlance: " + getPuertaEnlace());
+    			System.out.println("Puerta de Enlace: " + getPuertaEnlace());
     			
     			if(puertosAbiertos.isEmpty()) {
     				System.out.println("\nNo se encontraron puertos abiertos. ");

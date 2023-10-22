@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -28,6 +29,11 @@ public class ips {
 	private static String getIPprivada() throws UnknownHostException {
 		InetAddress ip = InetAddress.getLocalHost();
 		return ip.getHostAddress();
+	}
+	
+	private static String getNombreRed() throws UnknownHostException {
+		InetAddress nombreRed = InetAddress.getLocalHost();
+		return nombreRed.getCanonicalHostName();
 	}
 	
 	private static String getIPprivada2() throws SocketException {
@@ -149,6 +155,18 @@ public class ips {
 	        return puertosAbiertos;
 	    }
 	
+	    
+	    private static String getPuertaEnlace() throws IOException {
+	    	Process resultado = Runtime.getRuntime().exec("traceroute -m 1 www.amazon.com");
+	    	
+	    	BufferedReader output = new BufferedReader(new InputStreamReader(resultado.getInputStream()));
+	        String thisLine = output.readLine();
+	        StringTokenizer st = new StringTokenizer(thisLine);
+	        st.nextToken();
+	        String gateway = st.nextToken();
+	        return gateway;
+	    }
+	    
     public static void main(String[] args) {
     	
     	
@@ -157,8 +175,10 @@ public class ips {
     		
     		if(comprobarConexion()) {
     			System.out.println("Conectado a Internet.\n");
+    			System.out.println("Nombre: " + getNombreRed());
     			System.out.println("IP Privada: " + getIPprivada2());
     			System.out.println("IP Publica: " + getIPpublica());
+    			System.out.println("Puerta de Enlance: " + getPuertaEnlace());
     			
     			if(puertosAbiertos.isEmpty()) {
     				System.out.println("\nNo se encontraron puertos abiertos. ");

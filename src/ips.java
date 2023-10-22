@@ -14,7 +14,6 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -186,41 +185,39 @@ public class ips {
 	    
 	    
 	    
-	    private static String getMascaraSubred(String interfaceName) throws SocketException, UnknownHostException {
+	    private static String getMascaraSubred(String nombreInterfaz) throws UnknownHostException, SocketException {
 	        String resultado = "";
+	        NetworkInterface networkInterface = null;
 
-	        Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
-	        while (networkInterfaces.hasMoreElements()) {
-	            NetworkInterface networkInterface = networkInterfaces.nextElement();
-	            if (networkInterface.getName().equals(interfaceName)) {
-	                List<InetAddress> inetAddresses = Collections.list(networkInterface.getInetAddresses());
-	                for (InetAddress inetAddress : inetAddresses) {
-	                    if (inetAddress instanceof Inet4Address) {
-	                        int prefixLength = networkInterface.getInterfaceAddresses().get(0).getNetworkPrefixLength();
-
-	                        int shiftAmount = 32 - prefixLength;
-	                        int mask = -1 << shiftAmount;
-
-	                        byte[] bytes = new byte[]{
-	                            (byte) (mask >> 24 & 0xFF),
-	                            (byte) (mask >> 16 & 0xFF),
-	                            (byte) (mask >> 8 & 0xFF),
-	                            (byte) (mask & 0xFF)
-	                        };
-
-	                        InetAddress netMask = InetAddress.getByAddress(bytes);
-	                        resultado = netMask.getHostAddress();
-	                        return resultado;
-	                    }
-	                }
+	        // Obtener la interfaz de red por nombre
+	        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+	        while (interfaces.hasMoreElements()) {
+	            NetworkInterface intf = interfaces.nextElement();
+	            if (intf.getName().equals(nombreInterfaz)) {
+	                networkInterface = intf;
+	                break;
 	            }
 	        }
 
-	        return "No se pudo obtener la mascara de red para la interfaz " + interfaceName;
+	        if (networkInterface != null) {
+	            int prefixLength = networkInterface.getInterfaceAddresses().get(0).getNetworkPrefixLength();
+
+	            int shiftAmount = 32 - prefixLength;
+	            int mask = -1 << shiftAmount;
+
+	            byte[] bytes = new byte[] {
+	                (byte) (mask >> 24 & 0xFF),
+	                (byte) (mask >> 16 & 0xFF),
+	                (byte) (mask >> 8 & 0xFF),
+	                (byte) (mask & 0xFF)
+	            };
+
+	            InetAddress netMask = InetAddress.getByAddress(bytes);
+	            resultado = netMask.getHostAddress();
+	        }
+
+	        return resultado;
 	    }
-	
-	
-	
 	    
     public static void main(String[] args) {
     	
@@ -233,7 +230,7 @@ public class ips {
     			System.out.println("Nombre: " + getNombreRed());
     			System.out.println("IP Privada: " + getIPprivada2());
     			System.out.println("IP Publica: " + getIPpublica());
-    			System.out.println("Puerta de Enlace: " + getPuertaEnlace());
+    			//System.out.println("Puerta de Enlace: " + getPuertaEnlace());
     			System.out.println("Mascara de Subred: " + getMascaraSubred("eth0"));
     			
     			if(puertosAbiertos.isEmpty()) {

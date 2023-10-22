@@ -195,7 +195,7 @@ public class ips {
 
 	            if (networkInterface.getName().equals(targetInterfaceName)) {
 	                targetInterface = networkInterface;
-	                break; // Detenemos la búsqueda cuando encontramos la interfaz deseada
+	                break; // Detenemos la busqueda cuando encontramos la interfaz deseada
 	            }
 	        }
 	        

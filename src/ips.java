@@ -162,7 +162,7 @@ public class ips {
 	        BufferedReader output = new BufferedReader(new InputStreamReader(resultado.getInputStream()));
 	        String thisLine;
 	        
-	        // Leer y descartar las primeras dos líneas de encabezado.
+	        // Leer y descartar las primeras dos lineas de encabezado.
 	        output.readLine();
 	        output.readLine();
 
@@ -173,7 +173,7 @@ public class ips {
 	        // Omitir la segunda columna (www.amazon.com)
 	        st.nextToken();
 	        
-	        // La dirección de la puerta de enlace se encuentra en la tercera columna
+	        // La direccion de la puerta de enlace se encuentra en la tercera columna
 	        String gateway = st.nextToken();
 	        return gateway;
 	    }

@@ -209,7 +209,7 @@ public class ips {
 	            }
 	        }
 	        
-	        return "No se pudo obtener la máscara de subred";
+	        return "No se pudo obtener la mascara de subred";
 	    }
 	    
     public static void main(String[] args) {

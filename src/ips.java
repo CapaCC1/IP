@@ -5,6 +5,7 @@ import java.net.HttpURLConnection;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.InterfaceAddress;
 import java.net.MalformedURLException;
 import java.net.NetworkInterface;
 import java.net.Socket;
@@ -157,6 +158,8 @@ public class ips {
 	
 	    
 	    private static String getPuertaEnlace() throws IOException {
+	    	/**Esta funcion funcionara unicamente teniendo en cuenta el comando a continuacion, no funcionara en otros sistemas 
+	    	 * que no sean raspbian**/
 	        Process resultado = Runtime.getRuntime().exec("traceroute -m 1 www.amazon.com");
 
 	        BufferedReader output = new BufferedReader(new InputStreamReader(resultado.getInputStream()));
@@ -180,6 +183,32 @@ public class ips {
 	        return gw;
 	    }
 	    
+	    
+	    
+	    private static String getMascaraSubred() throws UnknownHostException, SocketException {
+	    		
+	    	 InetAddress localHost = Inet4Address.getLocalHost();//Obtiene IP local
+	    	 NetworkInterface networkInterface = NetworkInterface.getByInetAddress(localHost);//Obtencion interfaz de red
+	    	 int prefijo = networkInterface.getInterfaceAddresses().get(0).getNetworkPrefixLength();// Guardado de prefijo de la mascara
+	    	 
+	            
+	            int desplazamiento = 32 - prefijo;// Cantidad de bits a desplazar a la izquierda
+	            int mask = -1 << desplazamiento;
+	            
+	            byte[] bytes = new byte[] {
+	                (byte) (mask >> 24 & 0xFF),
+	                (byte) (mask >> 16 & 0xFF),
+	                (byte) (mask >> 8 & 0xFF),
+	                (byte) (mask & 0xFF)
+	            };
+	            
+	            InetAddress netMask = InetAddress.getByAddress(bytes);
+	            String mascara = netMask.getHostAddress();
+	        
+	            return mascara;
+	            
+	        }
+	    
     public static void main(String[] args) {
     	
     	
@@ -192,6 +221,7 @@ public class ips {
     			System.out.println("IP Privada: " + getIPprivada2());
     			System.out.println("IP Publica: " + getIPpublica());
     			System.out.println("Puerta de Enlace: " + getPuertaEnlace());
+    			System.out.println("Mascara de Subred: " + getMascaraSubred());
     			
     			if(puertosAbiertos.isEmpty()) {
     				System.out.println("\nNo se encontraron puertos abiertos. ");

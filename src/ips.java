@@ -201,7 +201,7 @@ public class ips {
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }
-	        return null; // Si no se encuentra una dirección IP privada
+	        return null; // Si no se encuentra una direccion IP privada
 	    }
 	    
 	    private static String getMascaraSubred() throws UnknownHostException, SocketException {

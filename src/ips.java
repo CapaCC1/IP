@@ -169,6 +169,11 @@ public class ips {
 	        st.nextToken();
 	        st.nextToken();
 	        st.nextToken();
+	        st.nextToken();
+	        st.nextToken();
+	        st.nextToken();
+	        st.nextToken();
+	        st.nextToken();
 	        String gateway = st.nextToken();
 	        return gateway;
 	    }

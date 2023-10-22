@@ -64,6 +64,7 @@ public class ips {
 		return resultado;
 	}
 	
+	
 	private static String getIPpublica() throws IOException {
 		String error = "No Disponible sin Conexion!";
 		String resultado = "";
@@ -183,13 +184,16 @@ public class ips {
 	        return gw;
 	    }
 	    
+	    private static InetAddress getLocalhostAddress() throws UnknownHostException {
+	        InetAddress localhost = InetAddress.getByName("localhost");
+	        return localhost;
+	    }
 	    
 	    private static String getMascaraSubred() throws UnknownHostException, SocketException {
 	    	
 	    	String resultado = "";	
 	    	
-	    	 InetAddress localHost = Inet4Address.getLocalHost();
-	    	 NetworkInterface networkInterface = NetworkInterface.getByInetAddress(localHost);
+	    	 NetworkInterface networkInterface = NetworkInterface.getByInetAddress(getLocalhostAddress());
 	    	 int prefixLength = networkInterface.getInterfaceAddresses().get(0).getNetworkPrefixLength();
 	    	
 	            int shiftAmount = 32 - prefixLength;
@@ -219,7 +223,7 @@ public class ips {
     			System.out.println("Nombre: " + getNombreRed());
     			System.out.println("IP Privada: " + getIPprivada2());
     			System.out.println("IP Publica: " + getIPpublica());
-    			System.out.println("Puerta de Enlace: " + getPuertaEnlace());
+    			//System.out.println("Puerta de Enlace: " + getPuertaEnlace());
     			System.out.println("Mascara de Subred: " + getMascaraSubred());
     			
     			if(puertosAbiertos.isEmpty()) {

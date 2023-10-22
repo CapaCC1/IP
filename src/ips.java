@@ -157,23 +157,23 @@ public class ips {
 	
 	    
 	    private static String getPuertaEnlace() throws IOException {
-	    	Process resultado = Runtime.getRuntime().exec("traceroute -m 1 www.amazon.com");
-	    	
-	    	BufferedReader output = new BufferedReader(new InputStreamReader(resultado.getInputStream()));
-	        String thisLine = output.readLine();
+	        Process resultado = Runtime.getRuntime().exec("traceroute -m 1 www.amazon.com");
+
+	        BufferedReader output = new BufferedReader(new InputStreamReader(resultado.getInputStream()));
+	        String thisLine;
+	        
+	        // Leer y descartar las primeras dos líneas de encabezado.
+	        output.readLine();
+	        output.readLine();
+
+	        thisLine = output.readLine();
 	        StringTokenizer st = new StringTokenizer(thisLine);
 	        st.nextToken();
+	        
+	        // Omitir la segunda columna (www.amazon.com)
 	        st.nextToken();
-	        st.nextToken();
-	        st.nextToken();
-	        st.nextToken();
-	        st.nextToken();
-	        st.nextToken();
-	        st.nextToken();
-	        st.nextToken();
-	        st.nextToken();
-	        st.nextToken();
-	        st.nextToken();
+	        
+	        // La dirección de la puerta de enlace se encuentra en la tercera columna
 	        String gateway = st.nextToken();
 	        return gateway;
 	    }

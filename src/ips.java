@@ -186,28 +186,31 @@ public class ips {
 	    
 	    
 	    private static String getMascaraSubred() throws UnknownHostException, SocketException {
-	    		
-	    	 InetAddress localHost = Inet4Address.getLocalHost();//Obtiene IP local
-	    	 NetworkInterface networkInterface = NetworkInterface.getByInetAddress(localHost);//Obtencion interfaz de red
-	    	 int prefijo = networkInterface.getInterfaceAddresses().get(0).getNetworkPrefixLength();// Guardado de prefijo de la mascara
-	    	 
-	            
-	            int desplazamiento = 32 - prefijo;// Cantidad de bits a desplazar a la izquierda
-	            int mask = -1 << desplazamiento;
-	            
-	            byte[] bytes = new byte[] {
-	                (byte) (mask >> 24 & 0xFF),
-	                (byte) (mask >> 16 & 0xFF),
-	                (byte) (mask >> 8 & 0xFF),
-	                (byte) (mask & 0xFF)
-	            };
-	            
-	            InetAddress netMask = InetAddress.getByAddress(bytes);
-	            String mascara = netMask.getHostAddress();
+	        InetAddress localHost = Inet4Address.getLocalHost();
+	        NetworkInterface networkInterface = NetworkInterface.getByInetAddress(localHost);
 	        
-	            return mascara;
-	            
+	        if (networkInterface != null) {
+	            List<InterfaceAddress> interfaceAddresses = networkInterface.getInterfaceAddresses();
+	            if (interfaceAddresses != null && !interfaceAddresses.isEmpty()) {
+	                int prefijo = interfaceAddresses.get(0).getNetworkPrefixLength();
+	                int desplazamiento = 32 - prefijo;
+	                int mask = -1 << desplazamiento;
+	                
+	                byte[] bytes = new byte[] {
+	                    (byte) (mask >> 24 & 0xFF),
+	                    (byte) (mask >> 16 & 0xFF),
+	                    (byte) (mask >> 8 & 0xFF),
+	                    (byte) (mask & 0xFF)
+	                };
+	                
+	                InetAddress netMask = InetAddress.getByAddress(bytes);
+	                String mascara = netMask.getHostAddress();
+	                return mascara;
+	            }
 	        }
+	        
+	        return "No se pudo obtener la máscara de subred";
+	    }
 	    
     public static void main(String[] args) {
     	

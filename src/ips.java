@@ -164,7 +164,6 @@ public class ips {
 	        
 	        // Leer y descartar las primeras dos lineas de encabezado.
 	        output.readLine();
-	        output.readLine();
 
 	        thisLine = output.readLine();
 	        StringTokenizer st = new StringTokenizer(thisLine);
